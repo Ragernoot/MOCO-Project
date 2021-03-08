@@ -1,5 +1,6 @@
 package com.example.testforcoronaapp.apis
 
+import android.util.Log
 import com.example.testforcoronaapp.utils.Constants.Companion.BASE_URL
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -12,6 +13,7 @@ object RetrofitInstance {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
     }
+
 
     val api : ICoronaDataApi by lazy {
            retrofit.create(ICoronaDataApi::class.java)

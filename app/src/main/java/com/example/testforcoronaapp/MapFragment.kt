@@ -1,6 +1,7 @@
 package com.example.testforcoronaapp
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,26 +36,29 @@ class MapFragment : Fragment() {
 
             //viewModel.getDistrictDataViewModel()
             viewModel.statesDataLiveData.observe(this, Observer { response ->
+                if(response.isSuccessful) {
 
 //            lastUpdateView.append(response.lastUpdate.toString())
 //
 //            textView.append(response.states!!.size.toString())
 
-                var content = " "
+                    var content = " "
 
-                for (e in response.states!!) {
-                    content += "Name: " + e.name + "\n"
-                    content += "Code: " + e.code + "\n"
-                    content += "Count: " + e.count + "\n"
-                    content += "Fälle pro Woche: " + e.weekIncidence + "\n"
-                    content += "Fälle pro 100k: " + e.casesPer100k + "\n"
-                    content += "Tode: " + e.deaths + "\n\n"
+                    for (e in response.body()!!.states!!) {
+                        content += "Name: " + e.name + "\n"
+                        content += "Code: " + e.code + "\n"
+                        content += "Count: " + e.count + "\n"
+                        content += "Fälle pro Woche: " + e.weekIncidence + "\n"
+                        content += "Fälle pro 100k: " + e.casesPer100k + "\n"
+                        content += "Tode: " + e.deaths + "\n\n"
 
-                    textView.text = content
+                        textView.text = content
+                    }
+
+                    textView.append(response.body()!!.states!!.size.toString())
+                } else {
+                    Log.e("WrongMAP", "Something went Wrong")
                 }
-
-                textView.append(response.states!!.size.toString())
-
             })
         }
     }
