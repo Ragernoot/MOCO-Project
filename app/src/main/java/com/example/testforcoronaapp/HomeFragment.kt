@@ -9,12 +9,15 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.testforcoronaapp.model.districtModel.OtherDistrictObject
 import com.example.testforcoronaapp.repository.Repository
 import com.example.testforcoronaapp.utils.Constants
 import com.example.testforcoronaapp.viewmodelfactory.MainViewModelFactory
 import com.example.testforcoronaapp.viewmodels.MainViewModel
+import com.google.gson.Gson
 import okhttp3.Cache.Companion.key
 import java.util.*
+import kotlin.reflect.typeOf
 
 class HomeFragment : Fragment() {
 
@@ -38,36 +41,60 @@ class HomeFragment : Fragment() {
             Log.e("tag", "URL URL URL " + Constants.BASE_URL)
             //viewModel.getStatesDataViewModel()
 
-            viewModel.getDistrictDataViewModel()
-            viewModel.districtDataLiveData.observe(this, Observer { response ->
+//            viewModel.getDistrictDataViewModel()
+//            viewModel.districtDataLiveData.observe(this, Observer { response ->
+//
+//                if(response.isSuccessful) {
 
-                if(response.isSuccessful) {
-
-
-//            lastUpdateView.text = response.lastUpdate
-//                val test = response.data?.actualDataAgs
+////            lastUpdateView.text = response.lastUpdate
+////                val test = response.data?.actualDataAgs
+////
+////
+////                Log.e("tag", "WAS KOMMT HIER WOHL RAUS " + test)
 //
 //
-//                Log.e("tag", "WAS KOMMT HIER WOHL RAUS " + test)
+//                    var content = ""
+//                    for (e in response.body()!!.districts!!) {
+//                        content += "Name: " + e.name + "\n"
+//                        content += "Code: " + e.county + "\n"
+//                        content += "Count: " + e.count + "\n"
+//                        content += "Fälle pro Woche: " + e.weekIncidence + "\n"
+//                        content += "Fälle pro 100k: " + e.casesPer100k + "\n"
+//                        content += "Tode: " + e.deaths + "\n\n"
+//
+//                        textView.text = content
+//                    }
+//
+//                    textView.append(response.body()!!.districts!!.size.toString())
+//                } else {
+//                    Log.e("WrongHOME", "Something went Wrong")
+//                }
+//            })
 
 
-                    var content = ""
-                    for (e in response.body()!!.districts!!) {
-                        content += "Name: " + e.name + "\n"
-                        content += "Code: " + e.county + "\n"
-                        content += "Count: " + e.count + "\n"
-                        content += "Fälle pro Woche: " + e.weekIncidence + "\n"
-                        content += "Fälle pro 100k: " + e.casesPer100k + "\n"
-                        content += "Tode: " + e.deaths + "\n\n"
+            viewModel.getDistrictDataViewModel2()
+            viewModel.otherDistrictDataLiveData.observe(this, Observer {
 
-                        textView.text = content
-                    }
+                val jsonDataString = it.body()!!.data.listOfAGSObjects.keys
 
-                    textView.append(response.body()!!.districts!!.size.toString())
-                } else {
-                    Log.e("WrongHOME", "Something went Wrong")
-                }
+                Log.e("TEST", jsonDataString.toString())
+
             })
+
+
+            val gson = Gson()
+            viewModel.getDistrictDataViewModelString()
+            viewModel.districtDataString.observe(this, Observer {
+
+                val jsonDataString = it.body()
+
+                val otherDistrictObject : String = gson.toJson(jsonDataString)
+
+                Log.e("TEST2", otherDistrictObject)
+
+            })
+
+
         }
     }
 }
