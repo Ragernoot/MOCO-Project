@@ -9,15 +9,14 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.testforcoronaapp.model.districtModel.OtherDistrictObject
+import com.example.testforcoronaapp.model.districtModel.ActualData
 import com.example.testforcoronaapp.repository.Repository
 import com.example.testforcoronaapp.utils.Constants
 import com.example.testforcoronaapp.viewmodelfactory.MainViewModelFactory
 import com.example.testforcoronaapp.viewmodels.MainViewModel
 import com.google.gson.Gson
-import okhttp3.Cache.Companion.key
-import java.util.*
-import kotlin.reflect.typeOf
+import org.json.JSONObject
+import java.lang.StringBuilder
 
 class HomeFragment : Fragment() {
 
@@ -33,68 +32,53 @@ class HomeFragment : Fragment() {
 
         if (view != null) {
             val textView = view.findViewById<TextView>(R.id.nav_home_textView)
-//        val lastUpdateView = findViewById<TextView>(R.id.jsonDataLastUpdate)
 
             val repository = Repository()
             val viewModelFactory = MainViewModelFactory(repository)
             viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
-            Log.e("tag", "URL URL URL " + Constants.BASE_URL)
-            //viewModel.getStatesDataViewModel()
+            viewModel.getDistrictDataViewModel()
 
-//            viewModel.getDistrictDataViewModel()
-//            viewModel.districtDataLiveData.observe(this, Observer { response ->
-//
-//                if(response.isSuccessful) {
+            Log.e("URL TEST", Constants.BASE_URL)
 
-////            lastUpdateView.text = response.lastUpdate
-////                val test = response.data?.actualDataAgs
-////
-////
-////                Log.e("tag", "WAS KOMMT HIER WOHL RAUS " + test)
-//
-//
-//                    var content = ""
-//                    for (e in response.body()!!.districts!!) {
-//                        content += "Name: " + e.name + "\n"
-//                        content += "Code: " + e.county + "\n"
-//                        content += "Count: " + e.count + "\n"
-//                        content += "Fälle pro Woche: " + e.weekIncidence + "\n"
-//                        content += "Fälle pro 100k: " + e.casesPer100k + "\n"
-//                        content += "Tode: " + e.deaths + "\n\n"
-//
-//                        textView.text = content
-//                    }
-//
-//                    textView.append(response.body()!!.districts!!.size.toString())
-//                } else {
-//                    Log.e("WrongHOME", "Something went Wrong")
-//                }
-//            })
+            viewModel.districtDataLiveData.observe(this, Observer { response ->
 
+                if(response.isSuccessful) {
+                    val jsonDataString = response.body()
+                    val json = JSONObject(jsonDataString!!)
+                    val data = json.getJSONObject("data")
+                    val allKeys = data.keys()
+                    val listOfJSONObject = mutableListOf<JSONObject>()
+                    allKeys.forEach { listOfJSONObject.add(data.getJSONObject(it)) }
 
-            viewModel.getDistrictDataViewModel2()
-            viewModel.otherDistrictDataLiveData.observe(this, Observer {
+                    val gson = Gson()
+                    val listOfJavaObject = mutableListOf<ActualData>()
+                    for (listItem in listOfJSONObject) {
+                        var jsonObjectString = listItem.toString()
 
-                val jsonDataString = it.body()!!.data.listOfAGSObjects.keys
+                        val sb = StringBuilder(jsonObjectString)
+                        val first: Int = jsonObjectString.indexOf("\"")
+                        val last: Int = jsonObjectString.lastIndexOf("\"")
+                        if (first != last) {
+                            var i = first + 1
+                            while (i < last) {
+                                if (sb[i] == '\'') {
+                                    sb.insert(i, '\'')
+                                    i++
+                                }
+                                i++
+                            }
+                        }
+                        jsonObjectString = sb.toString()
 
-                Log.e("TEST", jsonDataString.toString())
-
+                        val actualData = gson.fromJson(jsonObjectString, ActualData::class.java)
+                        listOfJavaObject.add(actualData)
+                    }
+                    Log.e("TEST UNTEN", listOfJavaObject.toString())
+                } else {
+                    Log.e("WrongMAP", "Something went Wrong")
+                }
             })
-
-
-            val gson = Gson()
-            viewModel.getDistrictDataViewModelString()
-            viewModel.districtDataString.observe(this, Observer {
-
-                val jsonDataString = it.body()
-
-                val otherDistrictObject : String = gson.toJson(jsonDataString)
-
-                Log.e("TEST2", otherDistrictObject)
-
-            })
-
-
         }
     }
 }
+

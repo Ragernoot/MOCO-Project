@@ -9,9 +9,13 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.testforcoronaapp.model.districtModel.ActualData
 import com.example.testforcoronaapp.repository.Repository
 import com.example.testforcoronaapp.viewmodelfactory.MainViewModelFactory
 import com.example.testforcoronaapp.viewmodels.MainViewModel
+import com.google.gson.Gson
+import org.json.JSONObject
+import java.lang.StringBuilder
 
 class MapFragment : Fragment() {
 
@@ -36,26 +40,9 @@ class MapFragment : Fragment() {
 
             //viewModel.getDistrictDataViewModel()
             viewModel.statesDataLiveData.observe(this, Observer { response ->
-                if(response.isSuccessful) {
-
-//            lastUpdateView.append(response.lastUpdate.toString())
-//
-//            textView.append(response.states!!.size.toString())
-
-                    var content = " "
-
-                    for (e in response.body()!!.states!!) {
-                        content += "Name: " + e.name + "\n"
-                        content += "Code: " + e.code + "\n"
-                        content += "Count: " + e.count + "\n"
-                        content += "Fälle pro Woche: " + e.weekIncidence + "\n"
-                        content += "Fälle pro 100k: " + e.casesPer100k + "\n"
-                        content += "Tode: " + e.deaths + "\n\n"
-
-                        textView.text = content
-                    }
-
-                    textView.append(response.body()!!.states!!.size.toString())
+                if(response.isSuccessful){
+                    // TODO Hier muss noch genau das selbe wie bei den Districts gemacht werden,
+                    // TODO Werde ich die Tage aber machen!
                 } else {
                     Log.e("WrongMAP", "Something went Wrong")
                 }
