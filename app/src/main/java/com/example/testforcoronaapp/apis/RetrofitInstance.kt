@@ -13,8 +13,6 @@ object RetrofitInstance {
                 .build()
     }
 
-
-
     val api : ICoronaDataApi by lazy {
            retrofit.create(ICoronaDataApi::class.java)
     }
