@@ -24,7 +24,7 @@ class MapFragment : Fragment() {
     // TODO Hier können wir jetzt irgendwas anderes machen.
     // TODO Der Service ist komplett auf eine Funktion ausgelagert und wir komplett auf der Home Seite angezeigt
 
-    lateinit var lm : LocationManager
+   /* lateinit var lm : LocationManager
     lateinit var loc: Location
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,7 +78,7 @@ class MapFragment : Fragment() {
 
     }
 
-
+*/
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_map, container, false)
     }
