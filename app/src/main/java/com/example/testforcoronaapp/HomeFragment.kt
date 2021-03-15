@@ -31,6 +31,7 @@ class HomeFragment : Fragment() {
 
         viewModel.districtDataLiveData.observe(this, Observer { response ->
 
+            response.sortBy { it.name }
             val view = view
             if (view != null) {
                 val textView = view.findViewById<TextView>(R.id.nav_home_textView)
