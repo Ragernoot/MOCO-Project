@@ -13,8 +13,13 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.testforcoronaapp.R.id.*
+import com.example.testforcoronaapp.repository.Repository
+import com.example.testforcoronaapp.viewmodelfactory.MainViewModelFactory
+import com.example.testforcoronaapp.viewmodels.DataServiceViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.util.*
 
@@ -25,7 +30,6 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var locationManager : LocationManager
     lateinit var location: Location
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +72,6 @@ class MainActivity : AppCompatActivity() {
         Log.d("Meine Location ist: ", " ${address.postalCode}")
         Log.d("Meine Location ist: ", " ${address.phone}")
         Log.d("Meine Location ist: ", " ${address.locality}")
-
 
     }
 

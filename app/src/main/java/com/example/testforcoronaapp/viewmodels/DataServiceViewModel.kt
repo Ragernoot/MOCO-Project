@@ -11,11 +11,14 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.Response
 import com.example.testforcoronaapp.utils.SomeAlgorithms.Companion.stringChanger
+import kotlinx.coroutines.GlobalScope
 
-class HomeFragmentViewModel(private val repository: Repository) : ViewModel() {
+class DataServiceViewModel(private val repository: Repository) : ViewModel() {
 
     private val gson = Gson()
     private var listOfJSONObjectDistrict = mutableListOf<JSONObject>()
+    private var listOfJSONObjectStates = mutableListOf<JSONObject>()
+
     private var listOfDistrictObjects = mutableListOf<DistrictData>()
     private var listOfStatesObjects = mutableListOf<StatesData>()
 
@@ -56,9 +59,9 @@ class HomeFragmentViewModel(private val repository: Repository) : ViewModel() {
         val json = JSONObject(jsonDataString!!)
         val data = json.getJSONObject("data")
         val allKeys = data.keys()
-        allKeys.forEach { listOfJSONObjectDistrict.add(data.getJSONObject(it)) }
+        allKeys.forEach { listOfJSONObjectStates.add(data.getJSONObject(it)) }
 
-        for (listItem in listOfJSONObjectDistrict) {
+        for (listItem in listOfJSONObjectStates) {
             val jsonObjectString = listItem.toString()
             val newString = stringChanger(jsonObjectString)
             val statesData = gson.fromJson(newString, StatesData::class.java)
