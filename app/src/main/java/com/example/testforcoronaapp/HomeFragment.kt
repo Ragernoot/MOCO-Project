@@ -21,6 +21,10 @@ import com.example.testforcoronaapp.viewmodels.DataServiceViewModel
 
 class HomeFragment : Fragment() {
 
+    private val TAG = "HomeFragment"
+    private val DISTRICT_STRING = "District"
+    private val STATE_STRING = "State"
+
     private lateinit var fragmentContext: Context
     private lateinit var viewModel: DataServiceViewModel
     private lateinit var dropDownStates : Spinner
@@ -29,10 +33,17 @@ class HomeFragment : Fragment() {
     private lateinit var textViewShowState : TextView
     private lateinit var stateNames: MutableList<String>
     private var districtNames: MutableList<String> = mutableListOf()
+    private lateinit var districtString : String
+    private lateinit var stateString : String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        if(savedInstanceState != null){
+            districtString = savedInstanceState.getString(DISTRICT_STRING).toString()
+            stateString = savedInstanceState.getString(STATE_STRING).toString()
+        }
 
         val repository = Repository()
         val viewModelFactory = MainViewModelFactory(repository)
@@ -54,17 +65,17 @@ class HomeFragment : Fragment() {
             dropDownStates.onItemSelectedListener = object : OnItemSelectedListener {
                 override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
 
-                    var state = ""
                     val selectState = stateResponse.find { statesData -> statesData.name == dropDownStates.selectedItem }
-                    state += "Name: " + selectState?.name + "\n"
-                    state += "Bevölkerung: " + selectState?.population + "\n"
-                    state += "Fälle: " + selectState?.cases + "\n"
-                    state += "Todesfälle: " + selectState?.deaths + "\n"
-                    state += "Fälle pro 100k Einwohner: " + selectState?.casesPer100k + "\n"
-                    state += "Fälle der letzten 7 Tage: " + selectState?.casesPerWeek + "\n"
-                    state += "Todesfälle der letzten 7 Tage: " + selectState?.deathsPerWeek + "\n"
-                    state += "Wochen Inzidenzwert: " + selectState?.weekIncidence + "\n"
-                    textViewShowState.text = state
+                    stateString = ""
+                    stateString += "Name: " + selectState?.name + "\n"
+                    stateString += "Bevölkerung: " + selectState?.population + "\n"
+                    stateString += "Fälle: " + selectState?.cases + "\n"
+                    stateString += "Todesfälle: " + selectState?.deaths + "\n"
+                    stateString += "Fälle pro 100k Einwohner: " + selectState?.casesPer100k + "\n"
+                    stateString += "Fälle der letzten 7 Tage: " + selectState?.casesPerWeek + "\n"
+                    stateString += "Todesfälle der letzten 7 Tage: " + selectState?.deathsPerWeek + "\n"
+                    stateString += "Wochen Inzidenzwert: " + selectState?.weekIncidence + "\n"
+                    textViewShowState.text = stateString
 
                     viewModel.districtDataLiveData.observe(viewLifecycleOwner, Observer { districtResponse ->
 
@@ -79,17 +90,18 @@ class HomeFragment : Fragment() {
 
                         dropDownDistricts.onItemSelectedListener = object : OnItemSelectedListener {
                             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                                var district = ""
+
                                 val selectedDistrict = districtResponse.find { districtData -> districtData.name == dropDownDistricts.selectedItem }
-                                district += "Name: " + selectedDistrict?.name + "\n"
-                                district += "Bevölkerung: " + selectedDistrict?.population + "\n"
-                                district += "Fälle: " + selectedDistrict?.cases + "\n"
-                                district += "Todesfälle: " + selectedDistrict?.deaths + "\n"
-                                district += "Fälle pro 100k Einwohner: " + selectedDistrict?.casesPer100k + "\n"
-                                district += "Fälle der letzten 7 Tage: " + selectedDistrict?.casesPerWeek + "\n"
-                                district += "Todesfälle der letzten 7 Tage: " + selectedDistrict?.deathsPerWeek + "\n"
-                                district += "Wochen Inzidenzwert: " + selectedDistrict?.weekIncidence + "\n"
-                                textViewShowDistrict.text = district
+                                districtString = ""
+                                districtString += "Name: " + selectedDistrict?.name + "\n"
+                                districtString += "Bevölkerung: " + selectedDistrict?.population + "\n"
+                                districtString += "Fälle: " + selectedDistrict?.cases + "\n"
+                                districtString += "Todesfälle: " + selectedDistrict?.deaths + "\n"
+                                districtString += "Fälle pro 100k Einwohner: " + selectedDistrict?.casesPer100k + "\n"
+                                districtString += "Fälle der letzten 7 Tage: " + selectedDistrict?.casesPerWeek + "\n"
+                                districtString += "Todesfälle der letzten 7 Tage: " + selectedDistrict?.deathsPerWeek + "\n"
+                                districtString += "Wochen Inzidenzwert: " + selectedDistrict?.weekIncidence + "\n"
+                                textViewShowDistrict.text = districtString
 
                             }
 
@@ -109,9 +121,8 @@ class HomeFragment : Fragment() {
 
         })
 
-
     }
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView =  inflater.inflate(R.layout.fragment_home, container, false)
 
@@ -125,6 +136,22 @@ class HomeFragment : Fragment() {
         return rootView
 
     }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        Log.d(TAG, "onSaveInstanceState: LLLLLLLLLLLLL")
+        Log.d(TAG, "onSaveInstanceState: $stateString")
+        Log.d(TAG, "onSaveInstanceState: $districtString")
+
+        outState.run {
+            putString(STATE_STRING, stateString)
+            putString(DISTRICT_STRING, districtString)
+        }
+    }
+
+
 
 }
 
