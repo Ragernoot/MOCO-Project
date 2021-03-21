@@ -26,6 +26,7 @@ class HomeFragment : Fragment() {
     private val STATE_STRING = "State"
 
     private lateinit var fragmentContext: Context
+
     private lateinit var viewModel: DataServiceViewModel
     private lateinit var dropDownStates : Spinner
     private lateinit var dropDownDistricts : Spinner
@@ -48,13 +49,10 @@ class HomeFragment : Fragment() {
         val repository = Repository()
         val viewModelFactory = MainViewModelFactory(repository)
 
-
         viewModel = ViewModelProvider(this, viewModelFactory).get(DataServiceViewModel::class.java)
         viewModel.getServiceDataViewModel()
 
         viewModel.statesDataLiveData.observe(this, Observer { stateResponse ->
-
-
 
             stateNames = stateResponse.map{ it.name }.toMutableList()
             val statesAdapter = ArrayAdapter<String>(fragmentContext, android.R.layout.simple_spinner_dropdown_item , stateNames)
@@ -78,7 +76,6 @@ class HomeFragment : Fragment() {
                     textViewShowState.text = stateString
 
                     viewModel.districtDataLiveData.observe(viewLifecycleOwner, Observer { districtResponse ->
-
 
                         districtNames = districtResponse.filter{ it.state == dropDownStates.selectedItem }.map { it.name }.sortedBy { it }.toMutableList()
 
@@ -109,8 +106,6 @@ class HomeFragment : Fragment() {
                                 return
                             }
                         }
-
-
                     })
                 }
 

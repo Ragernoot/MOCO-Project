@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.Response
 import com.example.testforcoronaapp.utils.SomeAlgorithms.Companion.stringChanger
-import kotlinx.coroutines.GlobalScope
 
 class DataServiceViewModel(private val repository: Repository) : ViewModel() {
 
@@ -37,7 +36,6 @@ class DataServiceViewModel(private val repository: Repository) : ViewModel() {
             statesDataLiveData.value = listOfStatesObjects
         }
     }
-
 
     private fun convertDistrictsToJavaObject(districtResponse : Response<String>) {
         val jsonDataString = districtResponse.body()
@@ -68,5 +66,4 @@ class DataServiceViewModel(private val repository: Repository) : ViewModel() {
             listOfStatesObjects.add(statesData)
         }
     }
-
 }

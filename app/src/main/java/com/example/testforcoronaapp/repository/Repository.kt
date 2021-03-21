@@ -12,5 +12,4 @@ class Repository {
     suspend fun getDistrictDataRepo(): Response<String> {
         return RetrofitInstance.api.getDistrictDataInterface()
     }
-
 }

@@ -1,40 +1,62 @@
 package com.example.testforcoronaapp
 
-
-import android.Manifest
+import android.content.ContentValues.TAG
 import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Geocoder
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.getSystemService
+import android.widget.Button
+import android.widget.ImageSwitcher
+import android.widget.ImageView
+import android.widget.ViewSwitcher
 import androidx.fragment.app.Fragment
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import java.util.*
+import com.example.testforcoronaapp.utils.Constants.Companion.BASE_URL
+import com.squareup.picasso.Picasso
+import okhttp3.*
+import java.io.ByteArrayInputStream
+import java.io.IOException
 
 
-class MapFragment : Fragment() {
+class MapFragment : Fragment(), View.OnClickListener {
+
+    private lateinit var fragmentContext : Context
+    private lateinit var imageView : ImageView
+    private lateinit var buttonSwitch : Button
+    private var districtImage = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
     }
 
-    // TODO Hier können wir jetzt irgendwas anderes machen.
-    // TODO Der Service ist komplett auf eine Funktion ausgelagert und wir komplett auf der Home Seite angezeigt
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_map, container, false)
+        val rootView =  inflater.inflate(R.layout.fragment_map, container, false)
+
+        fragmentContext = rootView.context
+        buttonSwitch = rootView.findViewById(R.id.button_image_switch)
+        imageView = rootView.findViewById(R.id.district_image_view)
+
+        return rootView
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        buttonSwitch.setOnClickListener(this)
+        Picasso.get().load(BASE_URL + "map/districts").into(imageView)
+    }
+
+    override fun onClick(view : View){
+        if(districtImage) {
+            Picasso.get().load(BASE_URL + "map/states").into(imageView)
+            districtImage = false
+        } else if(!districtImage) {
+            Picasso.get().load(BASE_URL + "map/districts").into(imageView)
+            districtImage = true
+        }
+    }
 }

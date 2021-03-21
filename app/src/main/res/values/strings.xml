@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TestForCoronaApp</string>
+    <string name="button_name">Bundesländer</string>
 </resources>
