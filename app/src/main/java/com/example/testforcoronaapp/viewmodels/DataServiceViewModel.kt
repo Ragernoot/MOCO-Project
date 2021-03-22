@@ -6,11 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.testforcoronaapp.model.districtModel.DistrictData
 import com.example.testforcoronaapp.model.statesModel.StatesData
 import com.example.testforcoronaapp.repository.Repository
+import com.example.testforcoronaapp.utils.SomeAlgorithms
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.Response
-import com.example.testforcoronaapp.utils.SomeAlgorithms.Companion.stringChanger
 
 class DataServiceViewModel(private val repository: Repository) : ViewModel() {
 
@@ -46,7 +46,7 @@ class DataServiceViewModel(private val repository: Repository) : ViewModel() {
 
         for (listItem in listOfJSONObjectDistrict) {
             val jsonObjectString = listItem.toString()
-            val newString = stringChanger(jsonObjectString)
+            val newString = SomeAlgorithms().stringChanger(jsonObjectString)
             val districtData = gson.fromJson(newString, DistrictData::class.java)
             listOfDistrictObjects.add(districtData)
         }
@@ -61,7 +61,7 @@ class DataServiceViewModel(private val repository: Repository) : ViewModel() {
 
         for (listItem in listOfJSONObjectStates) {
             val jsonObjectString = listItem.toString()
-            val newString = stringChanger(jsonObjectString)
+            val newString = SomeAlgorithms().stringChanger(jsonObjectString)
             val statesData = gson.fromJson(newString, StatesData::class.java)
             listOfStatesObjects.add(statesData)
         }

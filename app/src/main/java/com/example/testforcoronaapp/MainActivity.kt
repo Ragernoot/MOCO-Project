@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.job.JobInfo
 import android.app.job.JobScheduler;
 import android.content.ComponentName
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
@@ -13,18 +14,23 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.work.Constraints
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.testforcoronaapp.R.id.*
 import com.example.testforcoronaapp.utils.Constants.Companion.LOCATION_JOB_ID
+import com.example.testforcoronaapp.utils.SomeAlgorithms
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var locationManager : LocationManager
-    lateinit var location: Location
 //    lateinit var homeFragment : HomeFragment
 //    lateinit var mapFragment : MapFragment
 //    lateinit var settingsFragment : SettingsFragment
+
+    lateinit var context: Context
 
     private val TAG = "MainActivity"
 
@@ -32,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        context = applicationContext
 //        homeFragment = HomeFragment()
 //        mapFragment = MapFragment()
 //        settingsFragment = SettingsFragment()
@@ -41,7 +48,10 @@ class MainActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION), 111)
         }
 
-        scheduleJob()
+//        scheduleJob()
+
+        // SomeAlgorithms().readCSV(applicationContext)
+        scheduleWorker(context)
 
         // BOTTOM NAVIGATION
         val bottomNav = findViewById<BottomNavigationView>(bottom_navigation)
@@ -49,6 +59,22 @@ class MainActivity : AppCompatActivity() {
 
         supportFragmentManager.beginTransaction().replace(fragment_container, HomeFragment()).commit()
 
+    }
+
+    private fun scheduleWorker(context : Context){
+
+        Log.e(TAG, "scheduleWorker: HIER KOMME ICH REIN" )
+        val constraints = Constraints.Builder()
+                .setRequiresBatteryNotLow(true)
+                .build()
+
+        val locationWorker =
+                PeriodicWorkRequestBuilder<LocationTrackingWorker>(15, TimeUnit.MINUTES)
+                        //.setConstraints(constraints)
+                        .build()
+
+        WorkManager.getInstance(context).enqueue(locationWorker)
+        Log.e(TAG, "scheduleWorker: AUCH HIER KOMME ICH REIN" )
     }
 
 
