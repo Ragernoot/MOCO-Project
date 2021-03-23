@@ -22,7 +22,7 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
 
     private lateinit var locationManager : LocationManager
     private lateinit var myLocation: Location
-    lateinit var address: Address
+    private var address: Address = Address(Locale("ger", "DE"))
 
     var isGPSEnabled = false
 
@@ -107,7 +107,8 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
         val addresses = gc.getFromLocation(location.latitude, location.longitude, 1)
         if(addresses.size != 0) {
             address = addresses[0]
-        }
+       }
+
         return address
     }
 }

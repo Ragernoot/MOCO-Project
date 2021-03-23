@@ -1,6 +1,5 @@
 package com.example.testforcoronaapp.apis
 
-import android.media.Image
 import retrofit2.Response
 import retrofit2.http.GET
 

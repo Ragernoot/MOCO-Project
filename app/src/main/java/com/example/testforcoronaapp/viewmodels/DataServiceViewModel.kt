@@ -1,10 +1,12 @@
 package com.example.testforcoronaapp.viewmodels
 
-import androidx.lifecycle.MutableLiveData
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.testforcoronaapp.model.districtModel.DistrictData
-import com.example.testforcoronaapp.model.statesModel.StatesData
+import com.example.testforcoronaapp.model.room.AppDatabase
+import com.example.testforcoronaapp.model.room.district.DistrictData
+import com.example.testforcoronaapp.model.room.state.StatesData
 import com.example.testforcoronaapp.repository.Repository
 import com.example.testforcoronaapp.utils.SomeAlgorithms
 import com.google.gson.Gson
@@ -12,7 +14,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.Response
 
-class DataServiceViewModel(private val repository: Repository) : ViewModel() {
+class DataServiceViewModel (private val repository: Repository, database: AppDatabase)  : ViewModel() {
 
     private val gson = Gson()
     private var listOfJSONObjectDistrict = mutableListOf<JSONObject>()
@@ -21,21 +23,50 @@ class DataServiceViewModel(private val repository: Repository) : ViewModel() {
     private var listOfDistrictObjects = mutableListOf<DistrictData>()
     private var listOfStatesObjects = mutableListOf<StatesData>()
 
-    val statesDataLiveData: MutableLiveData<MutableList<StatesData>> = MutableLiveData()
-    val districtDataLiveData: MutableLiveData<MutableList<DistrictData>> = MutableLiveData()
+    val stateDAO = database.stateDAO()
+    val districtDAO = database.districtDAO()
 
-
-    fun getServiceDataViewModel(){
+    fun loadDataToRoom() {
         viewModelScope.launch {
-            val districtResponse = repository.getDistrictDataRepo()
-            convertDistrictsToJavaObject(districtResponse)
-            districtDataLiveData.value = listOfDistrictObjects
 
             val statesResponse = repository.getStatesDataRepo()
             convertStatesToJavaObject(statesResponse)
-            statesDataLiveData.value = listOfStatesObjects
+
+            for (ele in listOfStatesObjects) {
+                stateDAO.insert(ele)
+            }
+
+            val districtResponse = repository.getDistrictDataRepo()
+            convertDistrictsToJavaObject(districtResponse)
+
+            for (ele in listOfDistrictObjects) {
+                Log.d(TAG, "loadDataToRoom: ${ele.casesPerWeek}")
+                districtDAO.insert(ele)
+            }
         }
+
     }
+
+
+    // TODO TESTEREI
+//    fun loadDataToRoom2(){
+//        val statesResponse = repository.getStatesDataRepo()
+//        convertStatesToJavaObject(statesResponse)
+//        //stateDAO.insertAll(listOfStatesObjects.toTypedArray())
+//
+//        for (ele in listOfStatesObjects) {
+//            stateDAO.insert(ele)
+//        }
+//
+//        val districtResponse = repository.getDistrictDataRepo()
+//        convertDistrictsToJavaObject(districtResponse)
+//        //districtDAO.insertAll(listOfDistrictObjects.toTypedArray())
+//
+//        for (ele in listOfDistrictObjects) {
+//            districtDAO.insert(ele)
+//        }
+//    }
+
 
     private fun convertDistrictsToJavaObject(districtResponse : Response<String>) {
         val jsonDataString = districtResponse.body()
@@ -66,4 +97,5 @@ class DataServiceViewModel(private val repository: Repository) : ViewModel() {
             listOfStatesObjects.add(statesData)
         }
     }
+
 }

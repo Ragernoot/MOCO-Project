@@ -14,9 +14,10 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.testforcoronaapp.repository.Repository
-import com.example.testforcoronaapp.viewmodelfactory.MainViewModelFactory
-import com.example.testforcoronaapp.viewmodels.DataServiceViewModel
+import androidx.room.Room
+import com.example.testforcoronaapp.model.room.AppDatabase
+import com.example.testforcoronaapp.viewModelFactorys.HomeViewModelFactory
+import com.example.testforcoronaapp.viewmodels.HomeViewModel
 
 
 class HomeFragment : Fragment() {
@@ -27,7 +28,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var fragmentContext: Context
 
-    private lateinit var viewModel: DataServiceViewModel
+    private lateinit var viewModel: HomeViewModel
     private lateinit var dropDownStates : Spinner
     private lateinit var dropDownDistricts : Spinner
     private lateinit var textViewShowDistrict : TextView
@@ -41,18 +42,27 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        if(savedInstanceState != null){
-            districtString = savedInstanceState.getString(DISTRICT_STRING).toString()
-            stateString = savedInstanceState.getString(STATE_STRING).toString()
-        }
+//        if(savedInstanceState != null){
+//            districtString = savedInstanceState.getString(DISTRICT_STRING).toString()
+//            stateString = savedInstanceState.getString(STATE_STRING).toString()
+//        }
 
-        val repository = Repository()
-        val viewModelFactory = MainViewModelFactory(repository)
+        fragmentContext = activity!!.applicationContext
+        val database = Room.databaseBuilder(
+            fragmentContext,
+            AppDatabase::class.java, "AppDatabase"
+        ).build()
 
-        viewModel = ViewModelProvider(this, viewModelFactory).get(DataServiceViewModel::class.java)
-        viewModel.getServiceDataViewModel()
+        val viewModelFactory =
+            HomeViewModelFactory(
+                database
+            )
 
-        viewModel.statesDataLiveData.observe(this, Observer { stateResponse ->
+        viewModel = ViewModelProvider(this, viewModelFactory).get(HomeViewModel::class.java)
+
+        viewModel.getDataFromRoom()
+
+        viewModel.stateDataLiveData.observe(this, Observer { stateResponse ->
 
             stateNames = stateResponse.map{ it.name }.toMutableList()
             val statesAdapter = ArrayAdapter<String>(fragmentContext, android.R.layout.simple_spinner_dropdown_item , stateNames)
@@ -79,7 +89,6 @@ class HomeFragment : Fragment() {
 
                         districtNames = districtResponse.filter{ it.state == dropDownStates.selectedItem }.map { it.name }.sortedBy { it }.toMutableList()
 
-                        Log.e("districtNames ", districtNames.size.toString())
                         val districtAdapter = ArrayAdapter<String>(fragmentContext, android.R.layout.simple_spinner_dropdown_item, districtNames)
                         districtNames.add(0, "Bitte Landkreis/Stadt wählen")
                         dropDownDistricts.setSelection(0)
@@ -121,8 +130,6 @@ class HomeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView =  inflater.inflate(R.layout.fragment_home, container, false)
 
-        fragmentContext = rootView.context
-
         dropDownStates = rootView.findViewById(R.id.dropDown_States)
         dropDownDistricts = rootView.findViewById(R.id.dropDown_DistrictsForState)
         textViewShowDistrict = rootView.findViewById(R.id.text_view_show_district)
@@ -133,20 +140,18 @@ class HomeFragment : Fragment() {
     }
 
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        Log.d(TAG, "onSaveInstanceState: LLLLLLLLLLLLL")
-        Log.d(TAG, "onSaveInstanceState: $stateString")
-        Log.d(TAG, "onSaveInstanceState: $districtString")
-
-        outState.run {
-            putString(STATE_STRING, stateString)
-            putString(DISTRICT_STRING, districtString)
-        }
-    }
-
-
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        super.onSaveInstanceState(outState)
+//
+//        Log.d(TAG, "onSaveInstanceState: LLLLLLLLLLLLL")
+//        Log.d(TAG, "onSaveInstanceState: $stateString")
+//        Log.d(TAG, "onSaveInstanceState: $districtString")
+//
+//        outState.run {
+//            putString(STATE_STRING, stateString)
+//            putString(DISTRICT_STRING, districtString)
+//        }
+//    }
 
 }
 

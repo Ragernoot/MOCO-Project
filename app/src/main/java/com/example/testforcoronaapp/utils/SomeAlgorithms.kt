@@ -48,7 +48,7 @@ class SomeAlgorithms {
                     oneRow.csvDistrict = row[4]
                     oneRow.csvState = row[5]
 
-                    Log.d(TAG, "readCSV: ${oneRow.csvPLZ}")
+                    // Log.d(TAG, "readCSV: ${oneRow.csvPLZ}")
                     
                     csvList.add(oneRow)
                 }
