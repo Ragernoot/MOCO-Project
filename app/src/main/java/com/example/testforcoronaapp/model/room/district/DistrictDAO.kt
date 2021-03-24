@@ -23,4 +23,7 @@ interface DistrictDAO {
     @get:Query("SELECT * FROM district ORDER BY name")
     val allDistricts: LiveData<Array<DistrictData>>
 
+    @Query("SELECT * FROM district ORDER BY name")
+    fun funGetAllDistricts() : Array<DistrictData>
+
 }

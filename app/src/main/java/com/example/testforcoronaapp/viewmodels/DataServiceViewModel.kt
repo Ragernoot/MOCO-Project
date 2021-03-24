@@ -40,7 +40,6 @@ class DataServiceViewModel (private val repository: Repository, database: AppDat
             convertDistrictsToJavaObject(districtResponse)
 
             for (ele in listOfDistrictObjects) {
-                Log.d(TAG, "loadDataToRoom: ${ele.casesPerWeek}")
                 districtDAO.insert(ele)
             }
         }

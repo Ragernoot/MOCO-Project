@@ -2,6 +2,7 @@ package com.example.testforcoronaapp.model.room.state
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.example.testforcoronaapp.model.room.district.DistrictData
 import com.example.testforcoronaapp.model.room.state.StatesData
 
 @Dao
@@ -22,5 +23,8 @@ interface StateDAO {
 
     @get:Query("SELECT * FROM state ORDER BY name")
     val allStates: LiveData<Array<StatesData>>
+
+    @Query("SELECT * FROM state ORDER BY name")
+    fun funGetAllStates() : Array<StatesData>
 
 }

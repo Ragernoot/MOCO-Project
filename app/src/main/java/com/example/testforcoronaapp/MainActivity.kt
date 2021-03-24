@@ -74,18 +74,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun scheduleWorker(context : Context){
 
-        Log.e(TAG, "scheduleWorker: HIER KOMME ICH REIN" )
         val constraints = Constraints.Builder()
                 .setRequiresBatteryNotLow(true)
                 .build()
 
         val locationWorker =
                 PeriodicWorkRequestBuilder<LocationTrackingWorker>(15, TimeUnit.MINUTES)
-                        //.setConstraints(constraints)
+                        .setConstraints(constraints)
                         .build()
 
         WorkManager.getInstance(context).enqueue(locationWorker)
-        Log.e(TAG, "scheduleWorker: AUCH HIER KOMME ICH REIN" )
     }
 
     private val navListener = BottomNavigationView.OnNavigationItemSelectedListener {
