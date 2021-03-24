@@ -14,10 +14,14 @@ import androidx.work.Constraints
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.testforcoronaapp.R.id.*
+import com.example.testforcoronaapp.fragments.HomeFragment
+import com.example.testforcoronaapp.fragments.MapFragment
+import com.example.testforcoronaapp.fragments.SettingsFragment
 import com.example.testforcoronaapp.model.room.AppDatabase
 import com.example.testforcoronaapp.repository.Repository
 import com.example.testforcoronaapp.viewmodelfactory.DataServiceViewModelFactory
 import com.example.testforcoronaapp.viewmodels.DataServiceViewModel
+import com.example.testforcoronaapp.worker.LocationTrackingWorker
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.util.concurrent.TimeUnit
 

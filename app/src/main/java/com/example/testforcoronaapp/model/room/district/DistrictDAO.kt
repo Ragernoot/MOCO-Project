@@ -1,7 +1,9 @@
 package com.example.testforcoronaapp.model.room.district
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.testforcoronaapp.model.room.district.DistrictData
+import com.example.testforcoronaapp.model.room.state.StatesData
 
 @Dao
 interface DistrictDAO {
@@ -18,7 +20,7 @@ interface DistrictDAO {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(vararg district: DistrictData)
 
-    @Query("Select * From district ORDER BY name")
-    suspend fun loadAllDistricts () : Array<DistrictData>
+    @get:Query("SELECT * FROM district ORDER BY name")
+    val allDistricts: LiveData<Array<DistrictData>>
 
 }

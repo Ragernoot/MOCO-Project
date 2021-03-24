@@ -1,10 +1,11 @@
-package com.example.testforcoronaapp
+package com.example.testforcoronaapp.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.testforcoronaapp.R
 
 class SettingsFragment : Fragment() {
 

@@ -1,5 +1,6 @@
 package com.example.testforcoronaapp.model.room.state
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.testforcoronaapp.model.room.state.StatesData
 
@@ -19,7 +20,7 @@ interface StateDAO {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(vararg state: StatesData)
 
-    @Query("Select * From state ORDER BY name")
-    suspend fun loadAllStates () : Array<StatesData>
+    @get:Query("SELECT * FROM state ORDER BY name")
+    val allStates: LiveData<Array<StatesData>>
 
 }

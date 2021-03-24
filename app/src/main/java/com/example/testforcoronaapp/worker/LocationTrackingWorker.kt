@@ -1,4 +1,4 @@
-package com.example.testforcoronaapp
+package com.example.testforcoronaapp.worker
 
 import android.Manifest
 import android.content.Context
@@ -11,10 +11,18 @@ import android.location.LocationManager.GPS_PROVIDER
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.room.Room
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.example.testforcoronaapp.model.room.AppDatabase
+import com.example.testforcoronaapp.model.room.district.DistrictDAO
+import com.example.testforcoronaapp.model.room.district.DistrictData
 import com.example.testforcoronaapp.utils.SomeAlgorithms
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.coroutines.coroutineContext
 
 class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
@@ -41,6 +49,13 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
         }
     }
 
+    val database = Room.databaseBuilder(
+            context,
+            AppDatabase::class.java, "AppDatabase"
+    ).build()
+
+    val districtDAO = database.districtDAO()
+
     private fun doBackgroundWork(context : Context) : Boolean {
 
 //        thread(start = true){
@@ -60,7 +75,10 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
 //            }
 //        }
 
+
         val csvList = SomeAlgorithms().readCSV(context)
+
+        //val listData = getData()
 
         locationManager = applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         isGPSEnabled = locationManager.isProviderEnabled(GPS_PROVIDER)
@@ -84,11 +102,10 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
         }
 
         for (element in csvList) {
-
             if (element.csvPLZ == address.postalCode) {
 
-            }
 
+            }
         }
 
 
@@ -111,4 +128,5 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
 
         return address
     }
+
 }

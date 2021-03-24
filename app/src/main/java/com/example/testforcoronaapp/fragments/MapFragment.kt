@@ -1,24 +1,16 @@
-package com.example.testforcoronaapp
+package com.example.testforcoronaapp.fragments
 
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageSwitcher
 import android.widget.ImageView
-import android.widget.ViewSwitcher
 import androidx.fragment.app.Fragment
+import com.example.testforcoronaapp.R
 import com.example.testforcoronaapp.utils.Constants.Companion.BASE_URL
 import com.squareup.picasso.Picasso
-import okhttp3.*
-import java.io.ByteArrayInputStream
-import java.io.IOException
 
 
 class MapFragment : Fragment(), View.OnClickListener {

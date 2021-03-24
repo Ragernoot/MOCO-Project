@@ -1,8 +1,7 @@
-package com.example.testforcoronaapp
+package com.example.testforcoronaapp.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
+import com.example.testforcoronaapp.R
 import com.example.testforcoronaapp.model.room.AppDatabase
 import com.example.testforcoronaapp.viewModelFactorys.HomeViewModelFactory
 import com.example.testforcoronaapp.viewmodels.HomeViewModel
@@ -53,15 +53,9 @@ class HomeFragment : Fragment() {
             AppDatabase::class.java, "AppDatabase"
         ).build()
 
-        val viewModelFactory =
-            HomeViewModelFactory(
-                database
-            )
+        val viewModelFactory = HomeViewModelFactory(database)
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(HomeViewModel::class.java)
-
-        viewModel.getDataFromRoom()
-
         viewModel.stateDataLiveData.observe(this, Observer { stateResponse ->
 
             stateNames = stateResponse.map{ it.name }.toMutableList()

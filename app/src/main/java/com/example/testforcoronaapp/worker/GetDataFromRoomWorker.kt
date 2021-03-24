@@ -1,4 +1,4 @@
-package com.example.testforcoronaapp
+package com.example.testforcoronaapp.worker
 
 import android.content.Context
 import androidx.room.Room
