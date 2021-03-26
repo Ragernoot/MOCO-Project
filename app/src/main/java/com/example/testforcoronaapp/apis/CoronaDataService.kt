@@ -7,7 +7,7 @@ import okhttp3.Request
 class CoronaDataService {
     private val client = OkHttpClient()
 
-    suspend fun getStates(): String? {
+    fun getStates(): String? {
         val request: Request = Request.Builder()
             .url(BASE_URL + "states")
             .build()

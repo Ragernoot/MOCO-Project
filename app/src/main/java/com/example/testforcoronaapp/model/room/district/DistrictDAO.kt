@@ -26,4 +26,8 @@ interface DistrictDAO {
     @Query("SELECT * FROM district ORDER BY name")
     suspend fun funGetAllDistricts() : Array<DistrictData>
 
+    @Query("SELECT * FROM district WHERE district.ags == :ags")
+    fun findDistrict(ags : String) : DistrictData
+
+
 }

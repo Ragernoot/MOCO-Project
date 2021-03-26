@@ -18,7 +18,7 @@ class ApplicationInit : Application() {
         super.onCreate()
 
         createNotificationChannels()
-        //scheduleDataWorker(applicationContext)
+        scheduleDataWorker(applicationContext)
         scheduleLocationWorker(applicationContext)
     }
 
@@ -53,7 +53,7 @@ class ApplicationInit : Application() {
 
         val locationWorker =
             PeriodicWorkRequestBuilder<LocationTrackingWorker>(15, TimeUnit.MINUTES)
-                    .setInitialDelay(20, TimeUnit.SECONDS)
+                    .setInitialDelay(30, TimeUnit.SECONDS)
                     .setConstraints(constraints)
                     .build()
 

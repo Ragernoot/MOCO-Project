@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.room.Room
+import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.testforcoronaapp.R
@@ -20,13 +21,14 @@ import com.example.testforcoronaapp.utils.SomeAlgorithms
 import com.google.gson.Gson
 import org.json.JSONObject
 import retrofit2.Response
+import kotlin.concurrent.thread
 
-class FromGetToRoomWorker (context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
+class FromGetToRoomWorker (context: Context, workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
 
     private var notificationManagerCompat: NotificationManagerCompat = NotificationManagerCompat.from(context)
 
     private val repository = Repository()
-    val db = Room.databaseBuilder(
+    private val db = Room.databaseBuilder(
         context,
         AppDatabase::class.java, "RoomDatabase"
     ).build()
@@ -42,20 +44,18 @@ class FromGetToRoomWorker (context: Context, workerParams: WorkerParameters) : W
     private var listOfStatesObjects = mutableListOf<StatesData>()
 
 
-    override fun doWork(): Result {
-//        val test = CoronaDataService().getStates()
-//        Log.e(TAG, "${test?.length}" )
-//
-//        if(test != null) {
-//            Log.e(TAG, "doWork: Kommer hier rein" )
-//            convertStatesToJavaObjectTest(test)
-//            for (ele in listOfStatesObjects) {
-//                stateDAO.insertTest(ele)
-//            }
-//        } else {
-//            Toast.makeText(applicationContext, "Something went wrong", Toast.LENGTH_SHORT).show()
-//        }
-//
+    override suspend fun doWork(): Result {
+        // #################################
+        // Funktioniert nicht
+
+        val test = repository.getStatesDataRepo()
+        Log.e(TAG, "doWork: ${test.body()}" )
+        convertStatesToJavaObject(test)
+
+        for (ele in listOfStatesObjects) {
+            stateDAO.insert(ele)
+        }
+        // #################################
 
         val success = doBackgroundWork(applicationContext)
 
