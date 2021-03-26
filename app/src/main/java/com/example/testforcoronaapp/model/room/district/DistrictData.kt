@@ -7,9 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "district")
 data class DistrictData (
 
-    @PrimaryKey(autoGenerate = true)
-    val id : Int,
-
+    @PrimaryKey
     val ags: String,
     val name: String,
     val county: String,
@@ -33,4 +31,5 @@ data class DistrictData (
 
     @ColumnInfo(name = "cases_per_100k")
     val casesPer100k: Double
+
 )

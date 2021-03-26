@@ -1,32 +1,38 @@
 package com.example.testforcoronaapp.worker
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.ContentResolver
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Context.LOCATION_SERVICE
+import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
-import android.os.Build
-import android.provider.Settings.Global.getString
+import android.location.LocationListener
+import android.location.LocationManager
+import android.os.Looper
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat
 import androidx.room.Room
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.example.testforcoronaapp.ApplicationInit
 import com.example.testforcoronaapp.R
 import com.example.testforcoronaapp.model.room.AppDatabase
 import com.example.testforcoronaapp.utils.Constants.Companion.CHANNEL_1_ID
+import java.lang.Exception
 import java.util.*
 import kotlin.concurrent.thread
 
 
-class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
-
+class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams), LocationListener {
+    private lateinit var locationManager : LocationManager
     private var notificationManagerCompat: NotificationManagerCompat = NotificationManagerCompat.from(context)
     private val TAG = "LocationTrackingWorker"
+    private var isGranted = false
 
     val database = Room.databaseBuilder(
         context,
@@ -37,9 +43,9 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
     val stateDAO = database.stateDAO()
 
     override fun doWork(): Result {
-        val succes = doBackgroundWork(applicationContext)
+        val success = doBackgroundWork(applicationContext)
 
-        if (succes) {
+        if (success) {
             Log.e(TAG, "WORKER: SUCCESS")
             return Result.success()
         } else {
@@ -48,8 +54,29 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
         }
     }
 
+
+
     private fun doBackgroundWork(context: Context): Boolean {
-        //justAThread()
+
+        locationManager = context.getSystemService(LOCATION_SERVICE) as LocationManager
+
+        // Klappt nicht irgendwas macht es kaputttt
+        //E/WM-WorkerWrapper: Work [ id=630e5d7e-d463-477e-95ec-af3f185cb990, tags={ com.example.testforcoronaapp.worker.LocationTrackingWorker } ] failed because it threw an exception/error
+        //    java.util.concurrent.ExecutionException: java.lang.RuntimeException: Can't create handler inside thread Thread[pool-2-thread-1,5,main] that has not called Looper.prepare()
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            isGranted = true
+        }
+
+        if(isGranted) {
+            try {
+                Looper.prepare()
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0.2f, this)
+                Log.e(TAG, "location tracking aufgenommen")
+            } catch (e : Exception){
+                e.printStackTrace()
+            }
+        }
 
         val notification = NotificationCompat.Builder(context, CHANNEL_1_ID)
             .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
@@ -57,6 +84,7 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
             .setContentText("This Worker is working properly")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+            .setNotificationSilent()
             .build()
 
         notificationManagerCompat.notify(1, notification)
@@ -64,32 +92,16 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
         return true
     }
 
+    override fun onLocationChanged(location: Location) {
+        Log.e(TAG, "onLocationChanged: ${location.longitude}" )
+        Log.e(TAG, "onLocationChanged: ${location.latitude}" )
+    }
 
-    private fun reverseGeocode(location: Location?) {
+
+    private fun reverseGeocode(location: Location?)  {
         val gc = Geocoder(applicationContext, Locale.getDefault())
         if (location != null) {
             val address = gc.getFromLocation(location.latitude, location.longitude, 2)[0]
         }
     }
-
-
-    fun justAThread(){
-        thread(start = true){
-            kotlin.run {
-                for (i in 0..10){
-                    Log.d(TAG, "run: $i")
-
-                    try {
-                        Thread.sleep(1000)
-                    } catch (e : InterruptedException){
-                        e.printStackTrace()
-                    }
-                }
-
-                Log.d(TAG, "Job finished")
-
-            }
-        }
-    }
-
 }

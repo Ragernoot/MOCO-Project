@@ -1,16 +1,16 @@
 package com.example.testforcoronaapp.model.room.state
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.example.testforcoronaapp.model.room.district.DistrictData
-import com.example.testforcoronaapp.model.room.state.StatesData
+
 
 @Dao
 interface StateDAO {
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(vararg state : StatesData)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(vararg states : StatesData)
+    fun insertTest(vararg state : StatesData)
 
 //    @Insert
 //    suspend fun insertAll(vararg states : Array<StatesData>)
@@ -22,9 +22,9 @@ interface StateDAO {
     suspend fun update(vararg state: StatesData)
 
     @get:Query("SELECT * FROM state ORDER BY name")
-    val allStates: LiveData<Array<StatesData>>
+    val allStates: Array<StatesData>
 
     @Query("SELECT * FROM state ORDER BY name")
-    fun funGetAllStates() : Array<StatesData>
+    suspend fun funGetAllStates() : Array<StatesData>
 
 }

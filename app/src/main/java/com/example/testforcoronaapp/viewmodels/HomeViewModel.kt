@@ -1,25 +1,42 @@
 package com.example.testforcoronaapp.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import android.util.Log
+import androidx.lifecycle.*
+import androidx.room.Room
 import com.example.testforcoronaapp.model.room.AppDatabase
+import com.example.testforcoronaapp.model.room.district.DistrictDAO
 import com.example.testforcoronaapp.model.room.district.DistrictData
+import com.example.testforcoronaapp.model.room.state.StateDAO
 import com.example.testforcoronaapp.model.room.state.StatesData
 import kotlinx.coroutines.launch
-import kotlin.concurrent.thread
-import kotlinx.coroutines.delay as delay
 
-class HomeViewModel(database: AppDatabase) : ViewModel() {
-    val stateDataLiveData: LiveData<Array<StatesData>>
-    val districtDataLiveData: LiveData<Array<DistrictData>>
+class HomeViewModel(application : Application) : AndroidViewModel(application) {
 
-    val statesDAO = database.stateDAO()
-    val districtDAO = database.districtDAO()
+    val stateDataLiveData: MutableLiveData<Array<StatesData>> = MutableLiveData()
+    val districtDataLiveData: MutableLiveData<Array<DistrictData>> = MutableLiveData()
 
-    init{
-        stateDataLiveData = statesDAO.allStates
-        districtDataLiveData = districtDAO.allDistricts
+    private var stateDAO: StateDAO
+    private var districtDAO: DistrictDAO
+
+    init {
+        val context = application.applicationContext
+        val database = Room.databaseBuilder(
+            context,
+            AppDatabase::class.java, "AppDatabase"
+        ).build()
+
+        stateDAO = database.stateDAO()
+        districtDAO = database.districtDAO()
+    }
+
+    fun getDataFromRoom() {
+        viewModelScope.launch {
+            //stateDataLiveData.value = stateDAO.allStates
+            stateDataLiveData.value = stateDAO.funGetAllStates()
+            districtDataLiveData.value = districtDAO.funGetAllDistricts()
+            Log.e("INIT ", "INIT IST DURCH")
+            Log.e("INIT ", stateDAO.funGetAllStates().toString())
+        }
     }
 }

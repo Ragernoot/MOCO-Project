@@ -12,4 +12,8 @@ class Repository {
     suspend fun getDistrictDataRepo(): Response<String> {
         return RetrofitInstance.api.getDistrictDataInterface()
     }
+
+    fun getStatesDataRepoTest(): Response<String>{
+        return RetrofitInstance.api.getStatesDataInterfaceTest()
+    }
 }

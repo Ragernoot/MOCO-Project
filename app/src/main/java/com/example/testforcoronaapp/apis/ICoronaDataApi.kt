@@ -11,4 +11,6 @@ interface ICoronaDataApi {
     @GET("districts")
     suspend fun getDistrictDataInterface(): Response<String>
 
+    @GET("states")
+    fun getStatesDataInterfaceTest(): Response<String>
 }
