@@ -34,7 +34,7 @@ class HomeFragment : Fragment() {
     private lateinit var textViewShowDistrict : TextView
     private lateinit var textViewShowState : TextView
     private lateinit var stateNames: MutableList<String>
-    private var districtNames: MutableList<String> = mutableListOf()
+    private lateinit var districtCountyNames: MutableList<String>
     private lateinit var districtString : String
     private lateinit var stateString : String
 
@@ -47,6 +47,7 @@ class HomeFragment : Fragment() {
         val viewModelFactory = HomeViewModelFactory(activity!!.application)
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(HomeViewModel::class.java)
+
         viewModel.getDataFromRoom()
 
         viewModel.stateDataLiveData.observe(this, Observer { stateResponse ->
@@ -75,18 +76,18 @@ class HomeFragment : Fragment() {
                         viewLifecycleOwner,
                         Observer { districtResponse ->
 
-                            districtNames = districtResponse.filter { it.state == dropDownStates.selectedItem }.map { it.name }.sortedBy { it }.toMutableList()
+                            districtCountyNames = districtResponse.filter { it.state == dropDownStates.selectedItem }.map { it.county }.sortedBy { it }.toMutableList()
 
-                            val districtAdapter = ArrayAdapter<String>(fragmentContext, android.R.layout.simple_spinner_dropdown_item, districtNames)
-                            districtNames.add(0, "Bitte Landkreis/Stadt wählen")
+                            val districtAdapter = ArrayAdapter<String>(fragmentContext, android.R.layout.simple_spinner_dropdown_item, districtCountyNames)
+                            districtCountyNames.add(0, "Bitte Landkreis/Stadt wählen")
                             dropDownDistricts.setSelection(0)
                             dropDownDistricts.adapter = districtAdapter
 
                             dropDownDistricts.onItemSelectedListener = object : OnItemSelectedListener {
                                     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                                        val selectedDistrict = districtResponse.find { districtData -> districtData.name == dropDownDistricts.selectedItem }
+                                        val selectedDistrict = districtResponse.find { districtData -> districtData.county == dropDownDistricts.selectedItem }
                                         districtString = ""
-                                        districtString += "Name: " + selectedDistrict?.name + "\n"
+                                        districtString += "Landkreis / Kreisfreie Stadt: " + selectedDistrict?.county + "\n"
                                         districtString += "Bevölkerung: " + selectedDistrict?.population + "\n"
                                         districtString += "Fälle: " + selectedDistrict?.cases + "\n"
                                         districtString += "Todesfälle: " + selectedDistrict?.deaths + "\n"

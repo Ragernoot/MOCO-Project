@@ -1,24 +1,23 @@
-package com.example.testforcoronaapp.model.room
+package com.example.testforcoronaapp.model.room.currentDistrict
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-// Brauchen wir das ?
-
-@Entity
-data class LastDistrict (
+@Entity(tableName = "current_district")
+data class CurrentDistrict (
 
     @PrimaryKey
-    val id: Int,
+    val ags: String,
     val name: String,
+    val county: String,
+    val state: String,
     val population: Int,
     val cases: Int,
     val deaths: Int,
     val casesPerWeek: Int,
     val deathsPerWeek: Int,
+    val stateAbbreviation: String?,
     val recovered: Int,
-    val abbreviation: String,
     val weekIncidence: Double,
     val casesPer100k: Double
 

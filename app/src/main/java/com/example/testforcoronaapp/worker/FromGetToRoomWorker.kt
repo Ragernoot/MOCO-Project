@@ -3,7 +3,6 @@ package com.example.testforcoronaapp.worker
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.room.Room
@@ -17,6 +16,7 @@ import com.example.testforcoronaapp.model.room.district.DistrictData
 import com.example.testforcoronaapp.model.room.state.StatesData
 import com.example.testforcoronaapp.repository.Repository
 import com.example.testforcoronaapp.utils.Constants
+import com.example.testforcoronaapp.utils.Constants.Companion.DATABASE_NAME
 import com.example.testforcoronaapp.utils.SomeAlgorithms
 import com.google.gson.Gson
 import org.json.JSONObject
@@ -28,13 +28,13 @@ class FromGetToRoomWorker (context: Context, workerParams: WorkerParameters) : C
     private var notificationManagerCompat: NotificationManagerCompat = NotificationManagerCompat.from(context)
 
     private val repository = Repository()
-    private val db = Room.databaseBuilder(
+    private val database = Room.databaseBuilder(
         context,
-        AppDatabase::class.java, "RoomDatabase"
+        AppDatabase::class.java, DATABASE_NAME
     ).build()
 
-    val stateDAO = db.stateDAO()
-    val districtDAO = db.districtDAO()
+    private val stateDAO = database.stateDAO()
+    private val districtDAO = database.districtDAO()
 
     private val gson = Gson()
     private var listOfJSONObjectDistrict = mutableListOf<JSONObject>()
@@ -45,17 +45,36 @@ class FromGetToRoomWorker (context: Context, workerParams: WorkerParameters) : C
 
 
     override suspend fun doWork(): Result {
-        // #################################
-        // Funktioniert nicht
 
-        val test = repository.getStatesDataRepo()
-        Log.e(TAG, "doWork: ${test.body()}" )
-        convertStatesToJavaObject(test)
+        val statesResponse = repository.getStatesDataRepo()
+        convertStatesToJavaObject(statesResponse)
 
-        for (ele in listOfStatesObjects) {
-            stateDAO.insert(ele)
+        val districtResponse = repository.getDistrictDataRepo()
+        convertDistrictsToJavaObject(districtResponse)
+
+        thread (start = true) {
+            kotlin.run {
+                if(stateDAO.isEmpty() == 0) {
+                    for (ele in listOfStatesObjects) {
+                        stateDAO.insertWithoutCoroutine(ele)
+                    }
+                } else {
+                    for (ele in listOfStatesObjects) {
+                        stateDAO.updateWithoutCoroutine(ele)
+                    }
+                }
+
+                if(districtDAO.isEmpty() == 0) {
+                    for (ele in listOfDistrictObjects) {
+                        districtDAO.insertWithoutCoroutine(ele)
+                    }
+                } else {
+                    for (ele in listOfDistrictObjects) {
+                        districtDAO.updateWithoutCoroutine(ele)
+                    }
+                }
+            }
         }
-        // #################################
 
         val success = doBackgroundWork(applicationContext)
 
@@ -82,25 +101,6 @@ class FromGetToRoomWorker (context: Context, workerParams: WorkerParameters) : C
         notificationManagerCompat.notify(2, notification)
 
         return true
-    }
-
-    private fun convertStatesToJavaObjectTest(statesResponse: String) {
-        val json = JSONObject(statesResponse)
-        val data = json.getJSONObject("data")
-        val allKeys = data.keys()
-        allKeys.forEach { listOfJSONObjectStates.add(data.getJSONObject(it)) }
-
-        allKeys.forEach {
-            Log.d(TAG, "convertStatesToJavaObjectTest: $it")
-        }
-        
-        for (listItem in listOfJSONObjectStates) {
-            
-            val jsonObjectString = listItem.toString()
-            val newString = SomeAlgorithms().stringChanger(jsonObjectString)
-            val statesData = gson.fromJson(newString, StatesData::class.java)
-            listOfStatesObjects.add(statesData)
-        }
     }
 
     private fun convertDistrictsToJavaObject(districtResponse : Response<String>) {

@@ -9,6 +9,7 @@ import com.example.testforcoronaapp.model.room.district.DistrictDAO
 import com.example.testforcoronaapp.model.room.district.DistrictData
 import com.example.testforcoronaapp.model.room.state.StateDAO
 import com.example.testforcoronaapp.model.room.state.StatesData
+import com.example.testforcoronaapp.utils.Constants.Companion.DATABASE_NAME
 import kotlinx.coroutines.launch
 
 class HomeViewModel(application : Application) : AndroidViewModel(application) {
@@ -23,7 +24,7 @@ class HomeViewModel(application : Application) : AndroidViewModel(application) {
         val context = application.applicationContext
         val database = Room.databaseBuilder(
             context,
-            AppDatabase::class.java, "AppDatabase"
+            AppDatabase::class.java, DATABASE_NAME
         ).build()
 
         stateDAO = database.stateDAO()
@@ -32,7 +33,6 @@ class HomeViewModel(application : Application) : AndroidViewModel(application) {
 
     fun getDataFromRoom() {
         viewModelScope.launch {
-            //stateDataLiveData.value = stateDAO.allStates
             stateDataLiveData.value = stateDAO.funGetAllStates()
             districtDataLiveData.value = districtDAO.funGetAllDistricts()
             Log.e("INIT ", "INIT IST DURCH")

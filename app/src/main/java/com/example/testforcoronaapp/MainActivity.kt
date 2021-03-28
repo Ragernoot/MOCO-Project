@@ -15,21 +15,15 @@ import com.example.testforcoronaapp.repository.Repository
 import com.example.testforcoronaapp.viewModelFactorys.DataServiceViewModelFactory
 import com.example.testforcoronaapp.viewmodels.DataServiceViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.delay
+import kotlin.concurrent.thread
 
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: DataServiceViewModel
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val repository = Repository()
-        val viewModelFactory = DataServiceViewModelFactory(repository, application)
-
-        viewModel = ViewModelProvider(this, viewModelFactory).get(DataServiceViewModel::class.java)
-        viewModel.loadDataToRoom()
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
             && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -39,8 +33,16 @@ class MainActivity : AppCompatActivity() {
         // BOTTOM NAVIGATION
         val bottomNav = findViewById<BottomNavigationView>(bottom_navigation)
         bottomNav.setOnNavigationItemSelectedListener(navListener)
-        supportFragmentManager.beginTransaction().replace(fragment_container, HomeFragment()).commit()
+        delayHomeFragment()
+    }
 
+    private fun delayHomeFragment(){
+        thread (start = true){
+            kotlin.run {
+                Thread.sleep(1000)
+                supportFragmentManager.beginTransaction().replace(fragment_container, HomeFragment()).commit()
+            }
+        }
     }
 
     private val navListener = BottomNavigationView.OnNavigationItemSelectedListener {
