@@ -26,7 +26,7 @@ import kotlin.concurrent.thread
 
 class FromGetToRoomWorker (context: Context, workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
 
-    private var notificationManagerCompat: NotificationManagerCompat = NotificationManagerCompat.from(context)
+//    private var notificationManagerCompat: NotificationManagerCompat = NotificationManagerCompat.from(context)
 
     private val repository = Repository()
     private val database = Room.databaseBuilder(
@@ -77,32 +77,33 @@ class FromGetToRoomWorker (context: Context, workerParams: WorkerParameters) : C
             }
         }
 
-        val success = doBackgroundWork(applicationContext)
-
-        if (success) {
-            Log.e(TAG, "WORKER: SUCCESS")
-            return Result.success()
-        } else {
-            Log.e(TAG, "WORKER: FAILURE")
-            return Result.failure()
-        }
+//        val success = doBackgroundWork(applicationContext)
+//
+//        if (success) {
+//            Log.e(TAG, "WORKER: SUCCESS")
+//            return Result.success()
+//        } else {
+//            Log.e(TAG, "WORKER: FAILURE")
+//            return Result.failure()
+//        }
+        return Result.success()
     }
 
-    private fun doBackgroundWork(context: Context): Boolean {
-
-        val notification = NotificationCompat.Builder(context, Constants.CHANNEL_2_ID)
-            .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
-            .setContentTitle("Worker DATA")
-            .setContentText("This Worker is working properly")
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-            .setNotificationSilent()
-            .build()
-
-        notificationManagerCompat.notify(2, notification)
-
-        return true
-    }
+//    private fun doBackgroundWork(context: Context): Boolean {
+//
+//        val notification = NotificationCompat.Builder(context, Constants.CHANNEL_2_ID)
+//            .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
+//            .setContentTitle("Worker DATA")
+//            .setContentText("This Worker is working properly")
+//            .setPriority(NotificationCompat.PRIORITY_HIGH)
+//            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+//            .setNotificationSilent()
+//            .build()
+//
+//        notificationManagerCompat.notify(2, notification)
+//
+//        return true
+//    }
 
     private fun convertDistrictsToJavaObject(districtResponse : Response<String>) {
         val jsonDataString = districtResponse.body()

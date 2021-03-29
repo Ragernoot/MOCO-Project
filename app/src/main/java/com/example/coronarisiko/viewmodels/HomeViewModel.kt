@@ -35,8 +35,6 @@ class HomeViewModel(application : Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             stateDataLiveData.value = stateDAO.funGetAllStates()
             districtDataLiveData.value = districtDAO.funGetAllDistricts()
-            Log.e("INIT ", "INIT IST DURCH")
-            Log.e("INIT ", stateDAO.funGetAllStates().toString())
         }
     }
 }

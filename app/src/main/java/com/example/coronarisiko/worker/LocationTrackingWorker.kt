@@ -174,8 +174,6 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
 
                                 }
 
-                                Log.e(TAG, "doBackgroundWork: ${currentDistrict.name}")
-
                             }
                         }
                     }

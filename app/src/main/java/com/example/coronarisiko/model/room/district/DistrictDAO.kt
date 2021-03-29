@@ -18,9 +18,9 @@ interface DistrictDAO {
     fun updateWithoutCoroutine(vararg districtData: DistrictData)
 
     // Alle Districts
-    @get:Query("SELECT * FROM district ORDER BY name")
+    @get:Query("SELECT * FROM district")
     val allDistricts: Array<DistrictData>
-    @Query("SELECT * FROM district ORDER BY name")
+    @Query("SELECT * FROM district")
     suspend fun funGetAllDistricts() : Array<DistrictData>
 
     // Ein District
