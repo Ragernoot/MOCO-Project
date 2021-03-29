@@ -16,11 +16,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.coronarisiko.R
 import com.example.coronarisiko.viewModelFactorys.HomeViewModelFactory
 import com.example.coronarisiko.viewmodels.HomeViewModel
+import java.math.BigDecimal
+import java.math.BigInteger
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 
 class HomeFragment : Fragment() {
-
-    private val TAG = "HomeFragment"
 
     private lateinit var fragmentContext: Context
 
@@ -34,7 +36,6 @@ class HomeFragment : Fragment() {
     private lateinit var districtString : String
     private lateinit var stateString : String
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -43,7 +44,6 @@ class HomeFragment : Fragment() {
         val viewModelFactory = HomeViewModelFactory(activity!!.application)
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(HomeViewModel::class.java)
-
         viewModel.getDataFromRoom()
 
         viewModel.stateDataLiveData.observe(this, Observer { stateResponse ->
@@ -57,15 +57,15 @@ class HomeFragment : Fragment() {
             dropDownStates.onItemSelectedListener = object : OnItemSelectedListener {
                 override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
                     val selectState = stateResponse.find { statesData -> statesData.name == dropDownStates.selectedItem }
-                    stateString = ""
-                    stateString += "Name: " + "${selectState?.name} \n" ?: "ff"
-                    stateString += "Bevölkerung: " + selectState?.population + "\n"
-                    stateString += "Fälle: " + selectState?.cases + "\n"
-                    stateString += "Todesfälle: " + selectState?.deaths + "\n"
-                    stateString += "Fälle pro 100k Einwohner: " + selectState?.casesPer100k + "\n"
-                    stateString += "Fälle der letzten 7 Tage: " + selectState?.casesPerWeek + "\n"
-                    stateString += "Todesfälle der letzten 7 Tage: " + selectState?.deathsPerWeek + "\n"
-                    stateString += "Wochen Inzidenzwert: " + selectState?.weekIncidence + "\n"
+                    stateString = "Bundesland Daten:" + "\n"
+                    stateString += "Name: " + (selectState?.name ?: "") + "\n"
+                    stateString += "Bevölkerung: " + (selectState?.population ?: "") + "\n"
+                    stateString += "Fälle: " + (selectState?.cases ?: "") + "\n"
+                    stateString += "Todesfälle: " + (selectState?.deaths ?: "") + "\n"
+                    stateString += "Fälle pro 100k Einwohner: " + (if(selectState?.casesPer100k == null) "" else BigDecimal(selectState.casesPer100k).setScale(2, RoundingMode.HALF_EVEN)) + "\n"
+                    stateString += "Fälle der letzten 7 Tage: " + (selectState?.casesPerWeek ?: "") + "\n"
+                    stateString += "Todesfälle der letzten 7 Tage: " + (selectState?.deathsPerWeek ?: "") + "\n"
+                    stateString += "Wochen Inzidenzwert: " + (if(selectState?.weekIncidence == null)  "" else BigDecimal(selectState.weekIncidence).setScale(2, RoundingMode.HALF_EVEN)) + "\n"
                     textViewShowState.text = stateString
 
                     viewModel.districtDataLiveData.observe(
@@ -82,15 +82,15 @@ class HomeFragment : Fragment() {
                             dropDownDistricts.onItemSelectedListener = object : OnItemSelectedListener {
                                     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                                         val selectedDistrict = districtResponse.find { districtData -> districtData.county == dropDownDistricts.selectedItem }
-                                        districtString = ""
+                                        districtString = "Landkreis Daten: " + "\n"
                                         districtString += "Landkreis / Kreisfreie Stadt: " + selectedDistrict?.county + "\n"
                                         districtString += "Bevölkerung: " + selectedDistrict?.population + "\n"
                                         districtString += "Fälle: " + selectedDistrict?.cases + "\n"
                                         districtString += "Todesfälle: " + selectedDistrict?.deaths + "\n"
-                                        districtString += "Fälle pro 100k Einwohner: " + selectedDistrict?.casesPer100k + "\n"
+                                        districtString += "Fälle pro 100k Einwohner: " + (if(selectedDistrict?.casesPer100k == null)  "" else BigDecimal(selectedDistrict.casesPer100k).setScale(2, RoundingMode.HALF_EVEN)) + "\n"
                                         districtString += "Fälle der letzten 7 Tage: " + selectedDistrict?.casesPerWeek + "\n"
                                         districtString += "Todesfälle der letzten 7 Tage: " + selectedDistrict?.deathsPerWeek + "\n"
-                                        districtString += "Wochen Inzidenzwert: " + selectedDistrict?.weekIncidence + "\n"
+                                        districtString += "Wochen Inzidenzwert: " + (if(selectedDistrict?.weekIncidence == null)  "" else BigDecimal(selectedDistrict.weekIncidence).setScale(2, RoundingMode.HALF_EVEN)) + "\n"
                                         textViewShowDistrict.text = districtString
                                     }
 

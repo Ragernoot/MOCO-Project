@@ -18,7 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TestForCoronaApp">
         <activity android:name="com.example.coronarisiko.MainActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize">
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

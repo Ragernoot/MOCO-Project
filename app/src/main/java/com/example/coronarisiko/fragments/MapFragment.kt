@@ -40,14 +40,17 @@ class MapFragment : Fragment(), View.OnClickListener {
 
         buttonSwitch.setOnClickListener(this)
         Picasso.get().load(BASE_URL + "map/districts").into(imageView)
+        buttonSwitch.text = getString(R.string.button_on_district)
     }
 
     override fun onClick(view : View){
         if(districtImage) {
             Picasso.get().load(BASE_URL + "map/states").into(imageView)
+            buttonSwitch.text = getString(R.string.button_on_states)
             districtImage = false
         } else if(!districtImage) {
             Picasso.get().load(BASE_URL + "map/districts").into(imageView)
+            buttonSwitch.text = getString(R.string.button_on_district)
             districtImage = true
         }
     }

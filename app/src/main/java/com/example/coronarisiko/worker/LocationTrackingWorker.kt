@@ -114,6 +114,7 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
             fusedLocationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token.onCanceledRequested {
                 OnTokenCanceledListener {
                     // TODO Do something when token is canceled
+                    // Finde leider selber nichts dazu, was hier genau gemacht werden sollte
                 }
             }).addOnSuccessListener { newLocation ->
 
@@ -152,7 +153,7 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
 
                                             val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                                            val notification = NotificationCompat.Builder(context, CHANNEL_3_ID)
+                                            val notification = NotificationCompat.Builder(context, CHANNEL_1_ID)
                                                     .setSmallIcon(R.drawable.ic_round_warning_24)
                                                     .setContentTitle("Achtung Corona! Erhöhte Fallzahlen")
                                                     .setContentText("Klicke mich um mehr zu erfahren..")
@@ -167,7 +168,7 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
                                         }
                                     }
 
-                                    Thread.sleep(14 * 60 * 1000)
+                                    Thread.sleep(29 * 60 * 1000)
                                     lastDistrictDAO.delete(lastDistrict)
                                     lastDistrictDAO.insert(currentDistrict)
 
@@ -182,14 +183,14 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
             }
         }
 
-
+// Testing
 //        val intent = Intent(context, ResultActivity::class.java).apply {
 //            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 //        }
 //
 //        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 //
-//        val notification = NotificationCompat.Builder(context, CHANNEL_1_ID)
+//        val notification = NotificationCompat.Builder(context, CHANNEL_3_ID)
 //                .setSmallIcon(R.drawable.ic_round_warning_24)
 //                .setContentTitle("Achtung Corona! Erhöhte Fallzahlen außerhalb")
 //                .setContentText("Klicke mich um mehr zu erfahren..")

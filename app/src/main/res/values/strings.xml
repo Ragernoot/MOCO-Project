@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">TestForCoronaApp</string>
-    <string name="button_name">Bundesländer</string>
+    <string name="button_on_district">Bundesländer zeigen</string>
+    <string name="button_on_states">Landkreise zeigen</string>
     <string name="channel_name">Channel_Test</string>
     <string name="channel_description">Channel_Description</string>
 </resources>

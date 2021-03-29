@@ -70,8 +70,8 @@ class ApplicationInit : Application() {
             .build()
 
         val locationWorker =
-            PeriodicWorkRequestBuilder<LocationTrackingWorker>(15, TimeUnit.MINUTES)
-                    .setInitialDelay(10, TimeUnit.SECONDS)
+            PeriodicWorkRequestBuilder<LocationTrackingWorker>(30, TimeUnit.MINUTES)
+                    .setInitialDelay(15, TimeUnit.SECONDS)
                     .setConstraints(constraints)
                     .build()
 
@@ -85,7 +85,7 @@ class ApplicationInit : Application() {
             .build()
 
         val dataWorker =
-            PeriodicWorkRequestBuilder<FromGetToRoomWorker>(15, TimeUnit.MINUTES)
+            PeriodicWorkRequestBuilder<FromGetToRoomWorker>(6, TimeUnit.HOURS)
                 .setConstraints(constraints)
                 .build()
 
