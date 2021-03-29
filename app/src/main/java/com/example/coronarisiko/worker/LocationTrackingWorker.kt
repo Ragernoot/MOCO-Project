@@ -25,6 +25,10 @@ import com.example.coronarisiko.utils.Constants.Companion.CHANNEL_3_ID
 import com.example.coronarisiko.utils.Constants.Companion.DATABASE_NAME
 import com.example.coronarisiko.utils.SomeAlgorithms
 import com.google.android.gms.location.*
+import com.google.android.gms.tasks.CancellationToken
+import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.gms.tasks.OnTokenCanceledListener
+import kotlinx.coroutines.NonCancellable.cancel
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -69,22 +73,6 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
             0.0
     )
 
-    private var lastCurrentDistrict = CurrentDistrict(
-            "00000",
-            "Default",
-            "Default",
-            "Default",
-            0,
-            0,
-            0,
-            0,
-            0,
-            "Default",
-            0,
-            0.0,
-            0.0
-    )
-
     val database = Room.databaseBuilder(
         context,
         AppDatabase::class.java, DATABASE_NAME
@@ -99,12 +87,14 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
 
         val success = doBackgroundWork(applicationContext)
 
-        if (success) {
+        database.close()
+
+        return if (success) {
             Log.e(TAG, "WORKER: SUCCESS")
-            return Result.success()
+            Result.success()
         } else {
             Log.e(TAG, "WORKER: FAILURE")
-            return Result.failure()
+            Result.failure()
         }
     }
 
@@ -116,45 +106,40 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
                 && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             isGranted = true
         }
-        
+
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
 
-        if(isGranted){
+        if (isGranted) {
             // lastLocation ist vermutlich nicht das was wir wollen, weil Änderungen der Location nicht beachtet werden...
-            fusedLocationProviderClient.lastLocation.addOnSuccessListener { newLocation ->
+            fusedLocationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token.onCanceledRequested {
+                OnTokenCanceledListener {
+                    // TODO Do something when token is canceled
+                }
+            }).addOnSuccessListener { newLocation ->
 
                 val address = reverseGeocode(newLocation)
                 Log.e(TAG, address.postalCode)
-                for (csvElement in csvList){
-                    if(address.postalCode == csvElement.csvPLZ){
+                for (csvElement in csvList) {
+                    if (address.postalCode == csvElement.csvPLZ) {
                         val agsForDistrict = csvElement.csvAGS.slice(0..4)
 
-                        thread (start = true) {
+                        thread(start = true) {
                             kotlin.run {
                                 curDistrict = districtDAO.findDistrict(agsForDistrict)
                                 val currentDistrict = Converters().fromDistrictToLastDistrict(curDistrict)
 
-                                if(lastDistrictDAO.isEmpty() == 0){
+                                if (lastDistrictDAO.isEmpty() == 0) {
                                     lastDistrictDAO.insert(currentDistrict)
                                 } else {
                                     lastDistrict = lastDistrictDAO.getLastDistrict()
 
-//                                    if (lastDistrict == currentDistrict){
-//                                        Log.e(TAG, "Wir sind gleich!" )
-//                                    }
-
-                                    if(lastDistrict != currentDistrict){
-
-                                        Log.d(TAG, "Wir sind nicht gleich")
-                                        lastDistrictDAO.delete(lastDistrict)
-                                        lastDistrictDAO.insert(currentDistrict)
-
-                                        if(lastDistrict.cases < currentDistrict.cases){
+                                    if (lastDistrict != currentDistrict) {
+                                        if (lastDistrict.cases < currentDistrict.cases) {
 
                                             val currentDistrictAsCurrent = Converters().fromDistrictToCurrentDistrict(curDistrict)
                                             val lastCurrentDistrict = currentDistrictDAO.getLastCurrentDistrict()
 
-                                            if(currentDistrictDAO.isEmpty() == 0){
+                                            if (currentDistrictDAO.isEmpty() == 0) {
                                                 currentDistrictDAO.insert(currentDistrictAsCurrent)
                                             } else {
                                                 currentDistrictDAO.delete(lastCurrentDistrict)
@@ -182,6 +167,10 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
                                         }
                                     }
 
+                                    Thread.sleep(14 * 60 * 1000)
+                                    lastDistrictDAO.delete(lastDistrict)
+                                    lastDistrictDAO.insert(currentDistrict)
+
                                 }
 
                                 Log.e(TAG, "doBackgroundWork: ${currentDistrict.name}")
@@ -193,29 +182,29 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
             }
         }
 
-        // Log.e(TAG, "doBackgroundWork: ${csvElement.csvAGS.slice(0..4)}")
 
-        val intent = Intent(context, ResultActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        val notification = NotificationCompat.Builder(context, CHANNEL_1_ID)
-                .setSmallIcon(R.drawable.ic_round_warning_24)
-                .setContentTitle("Achtung Corona! Erhöhte Fallzahlen außerhalb")
-                .setContentText("Klicke mich um mehr zu erfahren..")
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .setNotificationSilent()
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-                .build()
-
-        notificationManagerCompat.notify(1, notification)
+//        val intent = Intent(context, ResultActivity::class.java).apply {
+//            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//        }
+//
+//        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+//
+//        val notification = NotificationCompat.Builder(context, CHANNEL_1_ID)
+//                .setSmallIcon(R.drawable.ic_round_warning_24)
+//                .setContentTitle("Achtung Corona! Erhöhte Fallzahlen außerhalb")
+//                .setContentText("Klicke mich um mehr zu erfahren..")
+//                .setPriority(NotificationCompat.PRIORITY_HIGH)
+//                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+//                .setNotificationSilent()
+//                .setContentIntent(pendingIntent)
+//                .setAutoCancel(true)
+//                .build()
+//
+//        notificationManagerCompat.notify(1, notification)
 
         return true
     }
+
 
     private fun reverseGeocode(location: Location) : Address {
         val gc = Geocoder(applicationContext, Locale.getDefault())

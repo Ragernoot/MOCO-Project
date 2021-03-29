@@ -12,7 +12,7 @@ interface CurrentDistrictDAO {
     fun getLastCurrentDistrict() : CurrentDistrict
 
     @Query("SELECT * FROM current_district")
-    suspend fun getLastCurrentDistrictSuspend() : CurrentDistrict
+    suspend fun getCurrentDistrictSuspend() : CurrentDistrict
 
     @Query("SELECT count(*) FROM current_district")
     fun isEmpty() : Int

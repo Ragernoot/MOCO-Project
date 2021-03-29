@@ -52,7 +52,7 @@ class ResultActivity : AppCompatActivity() {
             contentCur += "Todesfälle der letzten 7 Tage: " + it?.deathsPerWeek + "\n"
             contentCur += "Wochen Inzidenzwert: " + it?.weekIncidence + "\n"
 
-            lastView.text = contentCur
+            currView.text = contentCur
         })
     }
 

@@ -35,7 +35,7 @@ class ResultViewModel(application : Application) : AndroidViewModel(application)
 
     fun getData() {
         viewModelScope.launch {
-            currentDistrict.value = currentDistrictDAO.getLastCurrentDistrictSuspend()
+            currentDistrict.value = currentDistrictDAO.getCurrentDistrictSuspend()
             lastDistrict.value = lastDistrictDAO.getLastDistrictSuspend()
         }
     }
