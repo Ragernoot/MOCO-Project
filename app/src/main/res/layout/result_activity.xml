@@ -7,25 +7,45 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/last_view"
-        android:layout_width="390dp"
-        android:layout_height="337dp"
-        android:layout_marginTop="16dp"
-        android:text="Ihr stinkt alle hart nach Maggi test"
+        android:layout_width="202dp"
+        android:layout_height="36dp"
+        android:text="@string/label_for_last"
+        app:layout_constraintBottom_toTopOf="@+id/last_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.476"
+        app:layout_constraintHorizontal_bias="0.167"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/last_view"
+        android:layout_width="340dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="80dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:layout_width="202dp"
+        android:layout_height="36dp"
+        android:text="@string/label_for_curr"
+        app:layout_constraintBottom_toTopOf="@+id/curr_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.153"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
         android:id="@+id/curr_view"
-        android:layout_width="391dp"
-        android:layout_height="338dp"
-        android:text="TextView"
+        android:layout_width="340dp"
+        android:layout_height="250dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.45"
+        app:layout_constraintHorizontal_bias="0.454"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/last_view"
-        app:layout_constraintVertical_bias="0.6" />
+        app:layout_constraintVertical_bias="0.68" />
 </androidx.constraintlayout.widget.ConstraintLayout>

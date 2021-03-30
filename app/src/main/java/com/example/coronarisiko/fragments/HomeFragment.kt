@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -73,7 +74,7 @@ class HomeFragment : Fragment() {
                     viewModel.districtDataLiveData.observe(viewLifecycleOwner, Observer { districtResponse ->
 
                             districtCountyNames = districtResponse.filter { it.state == dropDownStates.selectedItem }.map { it.county }.sortedBy { it }.toMutableList()
-                            Log.e(TAG, "${districtCountyNames} ")
+
                             val districtAdapter = ArrayAdapter<String>(fragmentContext, android.R.layout.simple_spinner_dropdown_item, districtCountyNames)
                             districtCountyNames.add(0, "Landkreis/Stadt")
                             dropDownDistricts.setSelection(0)
