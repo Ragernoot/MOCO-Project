@@ -6,4 +6,9 @@
     <string name="channel_description">Channel_Description</string>
     <string name="label_for_curr">Daten des derzeitigen Standorts</string>
     <string name="label_for_last">Daten des letzten Standorts</string>
+    <string name="color_description0">Blau, Grün -> 0 - 5 Fälle</string>
+    <string name="color_description1">Helles Gelb, Orange ->  5 - 50 F.</string>
+    <string name="color_description2">Helles-dunkles Rot ->  50 - 200 F.</string>
+    <string name="color_description3">Helles-dunkles Lila ->  200 - 500 F.</string>
+    <string name="color_description4">Braun-Schwarz ->  500 -  >1000 F.</string>
 </resources>
