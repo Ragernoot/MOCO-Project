@@ -7,12 +7,12 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:layout_width="202dp"
+        android:layout_width="270dp"
         android:layout_height="36dp"
         android:text="@string/label_for_last"
         app:layout_constraintBottom_toTopOf="@+id/last_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.167"
+        app:layout_constraintHorizontal_bias="0.248"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
@@ -28,12 +28,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:layout_width="202dp"
+        android:layout_width="270dp"
         android:layout_height="36dp"
         android:text="@string/label_for_curr"
         app:layout_constraintBottom_toTopOf="@+id/curr_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.153"
+        app:layout_constraintHorizontal_bias="0.226"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
