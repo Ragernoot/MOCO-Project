@@ -107,6 +107,7 @@ class LocationTrackingWorker(context: Context, workerParams: WorkerParameters) :
             isGranted = true
         }
 
+
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
 
         if (isGranted) {

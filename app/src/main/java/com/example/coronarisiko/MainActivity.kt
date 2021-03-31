@@ -31,7 +31,10 @@ class MainActivity : AppCompatActivity() {
             kotlin.run {
                 Thread.sleep(1500)
 //                fragmentManager.beginTransaction().add(fragment_container, fragmentSettings, "3").hide(fragmentSettings).commit()
-                fragmentManager.beginTransaction().add(fragment_container, fragmentMap, "2").hide(fragmentMap).commit()
+                fragmentManager.beginTransaction()
+                        .add(fragment_container, fragmentMap, "2")
+                        .hide(fragmentMap)
+                        .commit()
                 fragmentManager.beginTransaction().add(fragment_container,fragmentHome, "1").commit()
             }
         }

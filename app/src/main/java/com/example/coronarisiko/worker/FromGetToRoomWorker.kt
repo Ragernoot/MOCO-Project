@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.LiveData
 import androidx.room.Room
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -43,7 +44,6 @@ class FromGetToRoomWorker (context: Context, workerParams: WorkerParameters) : C
 
     private var listOfDistrictObjects = mutableListOf<DistrictData>()
     private var listOfStatesObjects = mutableListOf<StatesData>()
-
 
     override suspend fun doWork(): Result {
 
@@ -118,6 +118,7 @@ class FromGetToRoomWorker (context: Context, workerParams: WorkerParameters) : C
             val districtData = gson.fromJson(newString, DistrictData::class.java)
             listOfDistrictObjects.add(districtData)
         }
+
     }
 
     private fun convertStatesToJavaObject(statesResponse: Response<String>) {
