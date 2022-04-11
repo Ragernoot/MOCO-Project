@@ -24,6 +24,8 @@ class ApplicationInit : Application() {
         scheduleLocationWorker(applicationContext)
     }
 
+    // asjodaosdnaolsdnlaskndoasdnoaksdmamsdasda
+
     private fun createNotificationChannels(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             val channel1 = NotificationChannel(
